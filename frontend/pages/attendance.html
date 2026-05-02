@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexAttend - Attendance</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-color: #f4ecf9;
+            --primary-color: #9d00ff;
+            --sidebar-bg: #ffffff;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-muted: #888888;
+            --hover-bg: #f3e5f5;
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --primary-color: #bf40ff;
+            --sidebar-bg: #1e1e1e;
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-muted: #a0a0a0;
+            --hover-bg: #2d2d2d;
+        }
+        
+        [data-theme="dark"] .qr-icon-box { background: #2d2d2d; color: #fff; }
+        [data-theme="dark"] .modal-box { background: #1e1e1e; }
+        [data-theme="dark"] .modal-box input { background: #2d2d2d; color: #fff; border-color: #444; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-radius: 0 30px 30px 0;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 0 30px;
+            margin-bottom: 40px;
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .logo i {
+            color: var(--primary-color);
+            font-size: 24px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item {
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            margin-bottom: 5px;
+        }
+
+        .nav-item i { font-size: 18px; width: 20px; }
+
+        .nav-item.active {
+            color: var(--primary-color);
+            background-color: var(--hover-bg);
+            border-right: 4px solid var(--primary-color);
+            border-radius: 0 20px 20px 0;
+            margin-right: 20px;
+        }
+
+        .nav-item:hover:not(.active) {
+            background-color: #f9f9f9;
+            color: var(--text-main);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Header Bar */
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .current-date {
+            background: var(--card-bg);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--text-main);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .view-toggle {
+            background: var(--card-bg);
+            padding: 5px;
+            border-radius: 20px;
+            display: flex;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .view-toggle button {
+            border: none;
+            background: transparent;
+            padding: 8px 20px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: 0.3s;
+        }
+
+        .view-toggle button.active {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            border-radius: 0;
+        }
+
+        /* Calendar Grid */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            flex: 1;
+        }
+
+        .day-column {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .day-header {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 15px;
+            min-height: 100px;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .day-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: var(--text-main);
+            margin-bottom: 20px;
+        }
+
+        .day-number {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            font-weight: bold;
+            font-size: 18px;
+            color: var(--text-main);
+        }
+
+        .day-cell {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 10px;
+            min-height: 120px;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .day-cell .day-number {
+            bottom: 10px;
+            right: 10px;
+            font-size: 16px;
+        }
+
+        /* Course Tags */
+        .course-tag {
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+
+        .tag-gray { background-color: #a0a0a0; }
+        .tag-purple { background-color: var(--primary-color); }
+
+        /* Bottom Actions */
+        .bottom-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: auto;
+            padding-top: 10px;
+        }
+
+        .qr-icon-box {
+            background: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            color: var(--text-main);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .scan-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(157, 0, 255, 0.3);
+            transition: 0.3s;
+        }
+
+        .scan-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        /* Modal specific to scanning */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .modal-box {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            width: 400px;
+            text-align: center;
+        }
+
+        .modal-box input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 16px;
+        }
+
+    
+        [data-theme="dark"] .notif-dropdown { background: var(--card-bg); border: 1px solid #333; }
+        [data-theme="dark"] .notif-dropdown h4 { border-bottom-color: #333; color: #fff;}
+        .notif-item { padding: 10px; border-bottom: 1px solid #f0f0f0; font-size: 13px; color: var(--text-main); cursor: pointer;}
+        .notif-item:hover { background: var(--hover-bg); }
+        [data-theme="dark"] .notif-item { border-bottom-color: #333;}
+        .notif-item:last-child { border-bottom: none; }
+        .notif-time { font-size: 11px; color: var(--primary-color); display: block; margin-top: 5px; }
+
+    
+        @keyframes scanAnim {
+            0% { top: 10%; }
+            100% { top: 90%; }
+        }
+
+    </style>
+
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>NexAttend</span>
+        </div>
+        <ul class="nav-menu">
+            <a href="student.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
+            <a href="courses.html" class="nav-item"><i class="fa-solid fa-play"></i> My Courses</a>
+            <a href="saved-courses.html" class="nav-item"><i class="fa-regular fa-bookmark"></i> Saved Course</a>
+            <a href="report.html" class="nav-item"><i class="fa-regular fa-file-lines"></i> Report</a>
+            <a href="attendance.html" class="nav-item active"><i class="fa-solid fa-qrcode"></i> Attendance</a>
+            <a href="explore.html" class="nav-item"><i class="fa-solid fa-compass"></i> Explore Course</a>
+            <a href="help.html" class="nav-item"><i class="fa-solid fa-headset"></i> Help Center</a>
+            <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Setting</a>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="calendar-header">
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <i class="fa-solid fa-moon" id="themeToggle" style="cursor: pointer; font-size: 20px; color: var(--text-muted);" title="Toggle Dark Mode"></i>
+                <div class="current-date">Sunday, April 11th</div>
+            </div>
+            <div class="view-toggle">
+                <button class="active" id="btnDay">Day</button>
+                <button id="btnMonth">Month</button>
+            </div>
+        </div>
+
+        <div class="calendar-grid">
+            <!-- Mon -->
+            <div class="day-column">
+                <div class="day-header">
+                    <div class="day-name">Mon</div>
+                    <div class="day-number">30</div>
+                </div>
+                <div class="day-cell">
+                    <div class="course-tag tag-gray">UI-UX<br>Design</div>
+                    <div class="day-number">13</div>
+                </div>
+                <div class="day-cell">
+                    <div class="course-tag tag-purple">UI-UX<br>Design</div>
+                    <div class="day-number">13</div>
+                </div>
+                <div class="day-cell">
+                    <div class="course-tag tag-purple">Flutter<br>Fundamentals</div>
+                    <div class="course-tag tag-purple">Digital<br>Marketing</div>
+                    <div class="day-number">11</div>
+                </div>
+            </div>
+
+            <!-- Tue -->
+            <div class="day-column">
+                <div class="day-header">
+                    <div class="day-name">Tue</div>
+                    <div class="day-number">31</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">07</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">14</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">21</div>
+                </div>
+            </div>
+
+            <!-- Wed -->
+            <div class="day-column">
+                <div class="day-header">
+                    <div class="day-name">Wed</div>
+                    <div class="day-number">01</div>
+                </div>
+                <div class="day-cell">
+                    <div class="course-tag tag-gray">Flutter<br>Fundamentals</div>
+                    <div class="course-tag tag-gray">Digital<br>Marketing</div>
+                    <div class="day-number">08</div>
+                </div>
+                <div class="day-cell">
+                    <div class="course-tag tag-purple">Flutter<br>Fundamentals</div>
+                    <div class="course-tag tag-purple">Digital<br>Marketing</div>
+                    <div class="day-number">08</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">22</div>
+                </div>
+            </div>
+
+            <!-- Thu -->
+            <div class="day-column">
+                <div class="day-header">
+                    <div class="day-name">Thu</div>
+                    <div class="day-number">02</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">09</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">16</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">23</div>
+                </div>
+            </div>
+
+            <!-- Fri -->
+            <div class="day-column">
+                <div class="day-header">
+                    <div class="day-name">Fri</div>
+                    <div class="day-number">03</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">10</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">15</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">24</div>
+                </div>
+            </div>
+
+            <!-- Sat -->
+            <div class="day-column">
+                <div class="day-header">
+                    <div class="day-name">Sat</div>
+                    <div class="day-number">04</div>
+                </div>
+                <div class="day-cell">
+                    <div class="course-tag tag-purple">Flutter<br>Fundamentals</div>
+                    <div class="course-tag tag-purple">Digital<br>Marketing</div>
+                    <div class="day-number" style="background: var(--primary-color); color: white; border-radius: 50%; width: 25px; height: 25px; display: flex; align-items: center; justify-content: center;">11</div>
+                </div>
+                <div class="day-cell">
+                    <div class="course-tag tag-purple">UI-UX Design</div>
+                    <div class="day-number">13</div>
+                </div>
+                <div class="day-cell">
+                    <div class="course-tag tag-purple">Flutter<br>Fundamentals</div>
+                    <div class="course-tag tag-purple">Digital<br>Marketing</div>
+                    <div class="day-number">11</div>
+                </div>
+            </div>
+
+            <!-- Sun -->
+            <div class="day-column">
+                <div class="day-header">
+                    <div class="day-name">Sun</div>
+                    <div class="day-number">05</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">12</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">19</div>
+                </div>
+                <div class="day-cell">
+                    <div class="day-number">26</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-actions">
+            <div class="qr-icon-box">
+                <i class="fa-solid fa-qrcode"></i>
+            </div>
+            <button class="scan-btn" onclick="openScanner()">Scan QR For attendance</button>
+        </div>
+    </main>
+
+    <!-- Scanner Modal -->
+    <div class="modal-overlay" id="scannerModal">
+        <div class="modal-box" style="width: 450px;">
+            <h2>Scan QR Code</h2>
+            <div style="display:flex; justify-content:space-around; margin: 20px 0; border-bottom: 2px solid #eee;">
+                <button id="tabToken" style="flex:1; padding:10px; background:transparent; border:none; border-bottom:3px solid var(--primary-color); font-weight:bold; color:var(--primary-color); cursor:pointer;">Token</button>
+                <button id="tabUpload" style="flex:1; padding:10px; background:transparent; border:none; color:var(--text-muted); font-weight:bold; cursor:pointer;">Upload</button>
+                <button id="tabCamera" style="flex:1; padding:10px; background:transparent; border:none; color:var(--text-muted); font-weight:bold; cursor:pointer;">Camera</button>
+            </div>
+            
+            <!-- Token View -->
+            <div id="viewToken" style="display:block;">
+                <p style="color: var(--text-muted); margin-top: 10px;">Enter the QR Token provided by the lecturer</p>
+                <input type="text" id="qrTokenInput" placeholder="e.g., QR123">
+                <button class="scan-btn" style="width: 100%; margin-top: 10px;" onclick="submitAttendance()">Submit Token</button>
+            </div>
+
+            <!-- Upload View -->
+            <div id="viewUpload" style="display:none; padding: 20px 0;">
+                <p style="color: var(--text-muted); margin-bottom: 15px;">Upload a QR code image</p>
+                <div style="border: 2px dashed #ccc; padding: 30px; border-radius: 10px; text-align: center; cursor: pointer; color: var(--text-muted);">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 40px; color: var(--primary-color); margin-bottom: 10px;"></i>
+                    <p>Click to browse or drag and drop</p>
+                    <input type="file" style="display:none;" id="qrUploadInput" accept="image/*">
+                </div>
+                <button class="scan-btn" style="width: 100%; margin-top: 15px;" onclick="mockScanSuccess()">Scan Uploaded Image</button>
+            </div>
+
+            <!-- Camera View -->
+            <div id="viewCamera" style="display:none; padding: 20px 0;">
+                <p style="color: var(--text-muted); margin-bottom: 15px;">Align QR code within the frame</p>
+                <div style="background: #000; height: 200px; border-radius: 10px; position: relative; display:flex; justify-content:center; align-items:center; overflow:hidden;">
+                    <div style="width: 150px; height: 150px; border: 2px solid rgba(255,255,255,0.5); position: absolute; box-shadow: 0 0 0 9999px rgba(0,0,0,0.5);"></div>
+                    <div style="width: 100%; height: 2px; background: #00ff00; position: absolute; top: 10%; animation: scanAnim 2s infinite alternate; box-shadow: 0 0 10px #00ff00;"></div>
+                    <i class="fa-solid fa-video-slash" style="color:#555; font-size:40px; position:absolute;"></i>
+                </div>
+                <button class="scan-btn" style="width: 100%; margin-top: 15px;" onclick="mockScanSuccess()">Simulate Camera Scan</button>
+            </div>
+
+            <button class="scan-btn" style="width: 100%; margin-top: 10px; background: #eee; color: #333; box-shadow: none;" onclick="closeScanner()">Cancel</button>
+        </div>
+    </div>
+
+    
+    <script src="../js/api.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/student.js"></script>
+    <script>
+        // Day/Month Toggle
+        const btnDay = document.getElementById('btnDay');
+        const btnMonth = document.getElementById('btnMonth');
+        if(btnDay && btnMonth) {
+            btnDay.addEventListener('click', () => {
+                btnDay.classList.add('active');
+                btnMonth.classList.remove('active');
+            });
+            btnMonth.addEventListener('click', () => {
+                btnMonth.classList.add('active');
+                btnDay.classList.remove('active');
+            });
+        }
+
+        function openScanner() {
+            document.getElementById('scannerModal').style.display = 'flex';
+        }
+
+        function closeScanner() {
+            document.getElementById('scannerModal').style.display = 'none';
+        }
+
+        // Tab Switching Logic
+        const tabs = ['Token', 'Upload', 'Camera'];
+        tabs.forEach(tab => {
+            const btn = document.getElementById('tab' + tab);
+            if(btn) {
+                btn.addEventListener('click', () => {
+                    // Reset all
+                    tabs.forEach(t => {
+                        document.getElementById('tab' + t).style.borderBottom = 'none';
+                        document.getElementById('tab' + t).style.color = 'var(--text-muted)';
+                        document.getElementById('view' + t).style.display = 'none';
+                    });
+                    // Set active
+                    btn.style.borderBottom = '3px solid var(--primary-color)';
+                    btn.style.color = 'var(--primary-color)';
+                    document.getElementById('view' + tab).style.display = 'block';
+                });
+            }
+        });
+
+        // Upload click proxy
+        const uploadBox = document.querySelector('#viewUpload div[style*="dashed"]');
+        if(uploadBox) {
+            uploadBox.addEventListener('click', () => {
+                document.getElementById('qrUploadInput').click();
+            });
+        }
+
+        function mockScanSuccess() {
+            alert('QR Code Scanned successfully! Mocking submission...');
+            // Injecting a valid mock token for testing
+            document.getElementById('qrTokenInput').value = 'QR123';
+            submitAttendance();
+        }
+
+        async function submitAttendance() {
+            const token = document.getElementById('qrTokenInput').value;
+            if(!token) {
+                alert('Please enter a valid token');
+                return;
+            }
+            
+            if(window.api) {
+                try {
+                    const user = await window.api.getCurrentUser();
+                    if (!user) {
+                        alert('Please log in first.');
+                        return;
+                    }
+
+                    await window.api.verifySessionToken({
+                        token: token.trim(),
+                        studentId: user.user_id
+                    });
+                    alert('Attendance recorded successfully!');
+                    closeScanner();
+                } catch (error) {
+                    alert(error.message || 'Invalid QR Token');
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

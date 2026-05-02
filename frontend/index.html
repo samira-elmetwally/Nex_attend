@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexAttend | Login</title>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f0f2f5;
+        }
+
+        .container {
+            display: flex;
+            width: 900px;
+            height: 550px;
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .auth-box {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Left Side */
+        .left-side {
+            flex: 1;
+            background: radial-gradient(circle at top left, #8e2de2, #4a00e0);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .left-side h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .left-side p {
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        /* Right Side */
+        .right-side {
+            flex: 1.2;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .right-side h2 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .right-side p.sub-text {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .input-group i:not(.password-toggle) {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+            z-index: 2;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 15px 12px 45px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+            color: #333;
+            font-family: inherit;
+        }
+
+        .input-group select {
+            appearance: none;
+            cursor: pointer;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+            z-index: 2;
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+
+        .options a {
+            color: #333;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .reminder {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Switch Toggle Style */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 18px;
+        }
+
+        .switch input {
+            display: none;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #bf00ff;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(16px);
+        }
+
+        .action-btn {
+            background: linear-gradient(to right, #bf00ff, #8e2de2);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+        }
+
+        .switch-text {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .switch-text span {
+            color: #4a00e0;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .switch-text span:hover {
+            color: #8e2de2;
+        }
+
+        .alert {
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .alert-danger {
+            background-color: #fee2e2;
+            color: #ef4444;
+            border: 1px solid #fca5a5;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                width: 90%;
+                height: auto;
+                min-height: 600px;
+            }
+
+            .auth-box {
+                flex-direction: column;
+            }
+
+            .left-side {
+                padding: 40px 20px;
+                flex: none;
+            }
+
+            .left-side h1 {
+                font-size: 2.5rem;
+            }
+
+            .right-side {
+                padding: 30px 20px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- Login Section -->
+        <div class="auth-box" id="loginBox">
+            <div class="left-side">
+                <h1>Welcome<br>Back</h1>
+            </div>
+
+            <div class="right-side">
+                <h2>Login</h2>
+                <p class="sub-text">Please log in To Continue</p>
+
+                <form id="loginForm">
+                    <div id="loginError" class="alert alert-danger hidden"></div>
+
+                    <div class="input-group">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="loginEmail" placeholder="Email" required>
+                    </div>
+
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        <i class="fa-regular fa-eye-slash password-toggle"
+                            onclick="togglePassword('loginPassword', this)"></i>
+                    </div>
+
+                    <div class="options">
+                        <div class="reminder">
+                            <span>Remember me next time</span>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <a href="#">Forget Password?</a>
+                    </div>
+
+                    <button type="submit" class="action-btn" id="loginBtn">Log In</button>
+                </form>
+
+                <div class="switch-text">
+                    Don't have an account? <span onclick="switchForm('register')">Sign Up</span>
+                </div>
+
+                <div style="margin-top: 15px; font-size: 11px; color: #999; text-align: center; line-height: 1.6;">
+                    <strong>Demo Accounts:</strong><br>
+                    student@mail.com / 123<br>
+                    instructor@mail.com / 123<br>
+                    admin@mail.com / 123
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Section -->
+        <div class="auth-box" id="registerBox" style="display: none;">
+            <div class="left-side">
+                <h1 style="font-size: 2.5rem; margin-bottom: 20px;">Hello<br>Welcome!</h1>
+                <p>Create Your Account</p>
+            </div>
+
+            <div class="right-side">
+                <h2>Register</h2>
+                <p class="sub-text">Please register to join the system.</p>
+
+                <form id="registerForm">
+                    <div id="registerError" class="alert alert-danger hidden"></div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <i class="fa-regular fa-user"></i>
+                            <input type="text" id="regName" placeholder="Full Name" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input type="email" id="regEmail" placeholder="Email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="input-group">
+                            <i class="fa-solid fa-phone"></i>
+                            <input type="tel" id="regPhone" placeholder="Mobile Number" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fa-solid fa-building"></i>
+                            <select id="regDept" required>
+                                <option value="" disabled selected hidden>Select Department</option>
+                                <option value="1">Computer Science</option>
+                                <option value="2">Information Systems</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <select id="role">
+                            <option value="Student">Student</option>
+                            <option value="Instructor">Instructor</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <i class="fa-solid fa-lock"></i>
+                        <input type="password" id="regPassword" placeholder="••••••••" required minlength="8">
+                        <i class="fa-regular fa-eye-slash password-toggle"
+                            onclick="togglePassword('regPassword', this)"></i>
+                    </div>
+
+                    <button type="submit" class="action-btn" id="regBtn">Sign Up</button>
+                </form>
+
+                <div class="switch-text" style="margin-top: 15px;">
+                    Already have an account? <span onclick="switchForm('login')">Log In</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Form Switching Logic
+        function switchForm(formName) {
+            const loginBox = document.getElementById('loginBox');
+            const registerBox = document.getElementById('registerBox');
+
+            if (formName === 'register') {
+                loginBox.style.display = 'none';
+                registerBox.style.display = 'flex';
+            } else {
+                registerBox.style.display = 'none';
+                loginBox.style.display = 'flex';
+            }
+        }
+
+        // Password Toggle Logic
+        function togglePassword(inputId, iconElement) {
+            const passwordField = document.getElementById(inputId);
+
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                iconElement.classList.replace('fa-eye-slash', 'fa-eye');
+            } else {
+                passwordField.type = 'password';
+                iconElement.classList.replace('fa-eye', 'fa-eye-slash');
+            }
+        }
+    </script>
+</body>
+
+</html>
