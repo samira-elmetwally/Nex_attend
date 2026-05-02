@@ -58,6 +58,11 @@ async function deleteUser(userId) {
       const courseIds = instructorCourses.map((course) => course.course_id);
       const placeholders = courseIds.map(() => "?").join(",");
 
+      await connection.query(
+        `DELETE FROM Student_Course WHERE course_id IN (${placeholders})`,
+        courseIds
+      );
+
       // Delete attendance linked to sessions of instructor courses.
       await connection.query(
         `DELETE A FROM Attendance A
@@ -82,8 +87,8 @@ async function deleteUser(userId) {
     // 2) Delete from Instructor table (if exists).
     await connection.query("DELETE FROM Instructor WHERE instructor_id = ?", [userId]);
 
-    // 3) Delete student attendance, then Student row (if exists).
-    // Attendance references Student directly, so it must be removed first.
+    // 3) Delete enrollments, student attendance, then Student row (if exists).
+    await connection.query("DELETE FROM Student_Course WHERE student_id = ?", [userId]);
     await connection.query("DELETE FROM Attendance WHERE Student_ID = ?", [userId]);
     await connection.query("DELETE FROM Student WHERE student_id = ?", [userId]);
 

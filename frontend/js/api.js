@@ -106,6 +106,58 @@ const api = {
         return this.request("/courses");
     },
 
+    /** POST /api/courses/enroll (alias: POST /api/enroll) */
+    async enrollCourse(courseId) {
+        const id = Number(courseId);
+        const data = await this.request("/courses/enroll", {
+            method: "POST",
+            body: JSON.stringify({ courseId: id }),
+        });
+        try {
+            const raw = JSON.parse(localStorage.getItem("enrolledCoursesFallback") || "[]");
+            const set = new Set(Array.isArray(raw) ? raw.map(Number) : []);
+            set.add(id);
+            localStorage.setItem("enrolledCoursesFallback", JSON.stringify([...set]));
+        } catch (_) {
+            /* ignore storage */
+        }
+        return data;
+    },
+
+    /** GET /api/courses/saved-courses (alias: GET /api/saved-courses) */
+    async getSavedCourses() {
+        try {
+            const data = await this.request("/courses/saved-courses");
+            let courses = data.courses ?? data.savedCourses ?? [];
+            if (!Array.isArray(courses)) courses = [];
+            return { courses };
+        } catch (_) {
+            return { courses: [] };
+        }
+    },
+
+    /** Submit session QR/token — uses current student id from auth. */
+    async verifyToken(token) {
+        const user = await this.getCurrentUser();
+        if (!user?.user_id) {
+            throw new Error("You must be logged in");
+        }
+        const t = typeof token === "string" ? token.trim() : String(token ?? "").trim();
+        return this.verifySessionToken({
+            token: t,
+            studentId: user.user_id,
+        });
+    },
+
+    /** Current student's attendance rows from GET /api/attendance/student/:id */
+    async getAttendance() {
+        const user = await this.getCurrentUser();
+        if (!user?.user_id) {
+            throw new Error("You must be logged in");
+        }
+        return this.getAttendanceByStudent(user.user_id);
+    },
+
     async createCourse(formData) {
         const token = sessionStorage.getItem(TOKEN_KEY);
         const response = await fetch(`${API_BASE_URL}/courses`, {

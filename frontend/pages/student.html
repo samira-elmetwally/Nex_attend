@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexAttend - Dashboard</title>
+    <title>NexAttend - Student Dashboard</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -384,13 +384,11 @@
         </div>
         <ul class="nav-menu">
             <a href="student.html" class="nav-item active"><i class="fa-solid fa-house"></i> Dashboard</a>
-            <a href="courses.html" class="nav-item"><i class="fa-solid fa-play"></i> My Courses</a>
-            <a href="saved-courses.html" class="nav-item"><i class="fa-regular fa-bookmark"></i> Saved Course</a>
-            <a href="report.html" class="nav-item"><i class="fa-regular fa-file-lines"></i> Report</a>
+            <a href="courses.html" class="nav-item"><i class="fa-solid fa-layer-group"></i> All Courses</a>
+            <a href="saved-courses.html" class="nav-item"><i class="fa-regular fa-bookmark"></i> Saved Courses</a>
             <a href="attendance.html" class="nav-item"><i class="fa-solid fa-qrcode"></i> Attendance</a>
-            <a href="explore.html" class="nav-item"><i class="fa-solid fa-compass"></i> Explore Course</a>
-            <a href="help.html" class="nav-item"><i class="fa-solid fa-headset"></i> Help Center</a>
-            <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Setting</a>
+            <a href="report.html" class="nav-item"><i class="fa-regular fa-file-lines"></i> Report</a>
+            <a href="settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
         </ul>
     </aside>
 
@@ -421,114 +419,13 @@
             <div class="left-panel">
                 <h2 style="font-size: 22px; color: #333;">Dashboard</h2>
                 
-                <div class="stats-container">
-                    <div class="stat-card">
-                        <i class="fa-solid fa-list-ul"></i>
-                        <h3>Ongoing</h3>
-                        <p>5</p>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fa-solid fa-check-circle"></i>
-                        <h3>Complete</h3>
-                        <p>37</p>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fa-solid fa-certificate"></i>
-                        <h3>Certificates</h3>
-                        <p>30</p>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fa-regular fa-clock"></i>
-                        <h3>Hours Spent</h3>
-                        <p>30</p>
-                    </div>
-                </div>
+                <div id="dashStatsGrid" class="stats-container" data-simple="1" style="grid-template-columns: repeat(2, 1fr);"></div>
 
                 <div class="section-header">
-                    <h2>Popular Courses</h2>
-                    <a href="explore.html">View All</a>
+                    <h2>Course catalog preview</h2>
+                    <a href="courses.html">Browse all courses</a>
                 </div>
-                <div class="courses-container">
-                    <div class="course-card">
-                        <div class="course-img" style="background: linear-gradient(45deg, #2b1055, #7597de);">
-                            <span class="course-price">400$</span>
-                        </div>
-                        <div class="course-info">
-                            <div class="category">Business</div>
-                            <h3>Blender 3D Design</h3>
-                            <div class="course-meta">
-                                <span>30 Lesson</span>
-                                <span>48 Hours</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="course-card">
-                        <div class="course-img" style="background: linear-gradient(45deg, #0f2027, #203a43, #2c5364);">
-                            <span class="course-price">100$</span>
-                        </div>
-                        <div class="course-info">
-                            <div class="category">Business</div>
-                            <h3>Digital Marketing</h3>
-                            <div class="course-meta">
-                                <span>30 Lesson</span>
-                                <span>48 Hours</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="course-card">
-                        <div class="course-img" style="background: linear-gradient(45deg, #ff9966, #ff5e62);">
-                            <span class="course-price">100$</span>
-                        </div>
-                        <div class="course-info">
-                            <div class="category">Code</div>
-                            <h3>Slicing UI Design With Tailwind</h3>
-                            <div class="course-meta">
-                                <span>30 Lesson</span>
-                                <span>48 Hours</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section-header">
-                    <h2>My Courses</h2>
-                </div>
-                <div class="table-card">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Course Name</th>
-                                <th>Lesson</th>
-                                <th>Status</th>
-                                <th>Level</th>
-                                <th>Category</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><i class="fa-brands fa-figma" style="color: #f24e1e; margin-right: 10px;"></i> Figma</td>
-                                <td>15/15</td>
-                                <td><span class="status-badge status-complete">Complete</span></td>
-                                <td>Intermediate</td>
-                                <td>Design</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fa-solid fa-chart-pie" style="color: #007bff; margin-right: 10px;"></i> Data Analysis</td>
-                                <td>12/15</td>
-                                <td><span class="status-badge status-ongoing">Ongoing</span></td>
-                                <td>Beginner</td>
-                                <td>Data</td>
-                            </tr>
-                            <tr>
-                                <td><i class="fa-solid fa-bullhorn" style="color: #9d00ff; margin-right: 10px;"></i> Digital Marketing</td>
-                                <td>8/15</td>
-                                <td><span class="status-badge status-ongoing">Ongoing</span></td>
-                                <td>Expert</td>
-                                <td>Design</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+                <div id="dashboardCoursePreview" class="courses-container"></div>
             </div>
 
             <div class="right-panel">
@@ -549,46 +446,9 @@
                 </div>
 
                 <div class="section-header">
-                    <h2>Continue Learning</h2>
+                    <h2>Quick links</h2>
                 </div>
-                <div class="continue-learning-list">
-                    <div class="learning-item">
-                        <div class="learning-info">
-                            <div class="learning-icon"><i class="fa-solid fa-chart-line"></i></div>
-                            <div class="learning-text">
-                                <h4>Data Analysis</h4>
-                                <p>DATA</p>
-                            </div>
-                        </div>
-                        <div class="mini-chart" style="background: conic-gradient(var(--primary-color) 50%, #f0f0f0 0);">
-                            <span class="mini-value">50%</span>
-                        </div>
-                    </div>
-                    <div class="learning-item">
-                        <div class="learning-info">
-                            <div class="learning-icon"><i class="fa-solid fa-bullhorn"></i></div>
-                            <div class="learning-text">
-                                <h4>Digital Marketing</h4>
-                                <p>BUSINESS</p>
-                            </div>
-                        </div>
-                        <div class="mini-chart" style="background: conic-gradient(var(--primary-color) 90%, #f0f0f0 0);">
-                            <span class="mini-value">90%</span>
-                        </div>
-                    </div>
-                    <div class="learning-item">
-                        <div class="learning-info">
-                            <div class="learning-icon"><i class="fa-solid fa-shield-halved"></i></div>
-                            <div class="learning-text">
-                                <h4>Cyber Security</h4>
-                                <p>CODE</p>
-                            </div>
-                        </div>
-                        <div class="mini-chart" style="background: conic-gradient(var(--primary-color) 50%, #f0f0f0 0);">
-                            <span class="mini-value">50%</span>
-                        </div>
-                    </div>
-                </div>
+                <div id="continueLearningList" class="continue-learning-list"></div>
             </div>
         </div>
     </main>

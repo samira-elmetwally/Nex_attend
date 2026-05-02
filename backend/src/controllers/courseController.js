@@ -2,6 +2,8 @@ const path = require("path");
 const fs = require("fs");
 const courseViewModel = require("../models/courseViewModel");
 const courseModel = require("../models/courseModel");
+const studentCourseModel = require("../models/studentCourseModel");
+const studentModel = require("../models/studentModel");
 
 async function listCourses(req, res, next) {
   try {
@@ -98,8 +100,54 @@ async function downloadCourse(req, res, next) {
   }
 }
 
+async function enrollInCourse(req, res, next) {
+  const courseId = Number(req.body.courseId ?? req.body.course_id);
+  const studentId = Number(req.user.userId);
+
+  try {
+    if (!Number.isFinite(courseId) || courseId < 1) {
+      return res.status(400).json({ message: "courseId is required" });
+    }
+
+    const courseOk = await courseModel.courseExists(courseId);
+    if (!courseOk) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+
+    const isStudent = await studentModel.studentExists(studentId);
+    if (!isStudent) {
+      return res.status(403).json({ message: "Only registered students can enroll" });
+    }
+
+    const outcome = await studentCourseModel.enrollInCourse({ studentId, courseId });
+    const statusCode = outcome === "inserted" ? 201 : 200;
+    return res.status(statusCode).json({
+      message: outcome === "inserted" ? "Enrolled successfully" : "Already enrolled",
+      courseId,
+    });
+  } catch (error) {
+    if (error.code === "ER_NO_REFERENCED_ROW_2") {
+      return res.status(400).json({ message: "Invalid student or course reference" });
+    }
+    return next(error);
+  }
+}
+
+async function listSavedCoursesForStudent(req, res, next) {
+  const studentId = Number(req.user.userId);
+
+  try {
+    const courses = await studentCourseModel.getEnrolledCoursesForStudent(studentId);
+    return res.status(200).json({ courses });
+  } catch (error) {
+    return next(error);
+  }
+}
+
 module.exports = {
   listCourses,
   createCourse,
   downloadCourse,
+  enrollInCourse,
+  listSavedCoursesForStudent,
 };

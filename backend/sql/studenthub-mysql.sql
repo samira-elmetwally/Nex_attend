@@ -39,6 +39,15 @@ CREATE TABLE IF NOT EXISTS Course (
   CONSTRAINT fk_course_instructor FOREIGN KEY (instructor_id) REFERENCES Instructor(instructor_id)
 );
 
+CREATE TABLE IF NOT EXISTS Student_Course (
+  student_id INT NOT NULL,
+  course_id INT NOT NULL,
+  enrolled_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (student_id, course_id),
+  CONSTRAINT fk_student_course_student FOREIGN KEY (student_id) REFERENCES Student(student_id),
+  CONSTRAINT fk_student_course_course FOREIGN KEY (course_id) REFERENCES Course(course_id)
+);
+
 CREATE TABLE IF NOT EXISTS Session (
   session_id INT PRIMARY KEY AUTO_INCREMENT,
   course_id INT NOT NULL,
@@ -57,6 +66,16 @@ CREATE TABLE IF NOT EXISTS Attendance (
   CONSTRAINT fk_attendance_student FOREIGN KEY (Student_ID) REFERENCES Student(student_id),
   CONSTRAINT fk_attendance_session FOREIGN KEY (Session_ID) REFERENCES Session(session_id),
   CONSTRAINT uq_attendance UNIQUE (Student_ID, Session_ID)
+);
+
+
+CREATE TABLE IF NOT EXISTS Student_Course (
+  student_id INT NOT NULL,
+  course_id INT NOT NULL,
+  enrolled_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (student_id, course_id),
+  CONSTRAINT fk_student_course_student FOREIGN KEY (student_id) REFERENCES Student(student_id),
+  CONSTRAINT fk_student_course_course FOREIGN KEY (course_id) REFERENCES Course(course_id)
 );
 
 INSERT INTO Department (department_name)

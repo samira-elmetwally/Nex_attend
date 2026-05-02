@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexAttend - Dashboard</title>
+    <title>NexAttend - Settings</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -384,13 +384,11 @@
         </div>
         <ul class="nav-menu">
             <a href="student.html" class="nav-item"><i class="fa-solid fa-house"></i> Dashboard</a>
-            <a href="courses.html" class="nav-item"><i class="fa-solid fa-play"></i> My Courses</a>
-            <a href="saved-courses.html" class="nav-item"><i class="fa-regular fa-bookmark"></i> Saved Course</a>
-            <a href="report.html" class="nav-item"><i class="fa-regular fa-file-lines"></i> Report</a>
+            <a href="courses.html" class="nav-item"><i class="fa-solid fa-layer-group"></i> All Courses</a>
+            <a href="saved-courses.html" class="nav-item"><i class="fa-regular fa-bookmark"></i> Saved Courses</a>
             <a href="attendance.html" class="nav-item"><i class="fa-solid fa-qrcode"></i> Attendance</a>
-            <a href="explore.html" class="nav-item"><i class="fa-solid fa-compass"></i> Explore Course</a>
-            <a href="help.html" class="nav-item"><i class="fa-solid fa-headset"></i> Help Center</a>
-            <a href="settings.html" class="nav-item active"><i class="fa-solid fa-gear"></i> Setting</a>
+            <a href="report.html" class="nav-item"><i class="fa-regular fa-file-lines"></i> Report</a>
+            <a href="settings.html" class="nav-item active"><i class="fa-solid fa-gear"></i> Settings</a>
         </ul>
     </aside>
 
@@ -482,8 +480,8 @@
     <script src="../js/main.js"></script>
     <script src="../js/student.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const user = window.api?.getCurrentUser();
+        document.addEventListener('DOMContentLoaded', async () => {
+            const user = await window.api.getCurrentUser();
             const deptMap = { 0: 'Administration', 1: 'Computer Science', 2: 'Information Systems' };
 
             // Populate fields from current user
@@ -495,7 +493,7 @@
                 document.getElementById('settingName').textContent = user.name;
                 
                 // Avatar initials or saved image
-                const savedAvatar = localStorage.getItem('userAvatar_' + user.id);
+                const savedAvatar = localStorage.getItem('userAvatar_' + user.user_id);
                 const avatarEl = document.getElementById('settingAvatar');
                 if(savedAvatar) {
                     avatarEl.innerHTML = `<img src="${savedAvatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
@@ -533,7 +531,7 @@
                     settingAvatarEl.innerHTML = `<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
                     
                     // Save to localStorage and update nav avatar
-                    if(user) localStorage.setItem('userAvatar_' + user.id, dataUrl);
+                    if(user) localStorage.setItem('userAvatar_' + user.user_id, dataUrl);
                     const navAvatar = document.getElementById('navAvatar');
                     if(navAvatar) navAvatar.innerHTML = `<img src="${dataUrl}" style="width:40px;height:40px;object-fit:cover;border-radius:50%;">`;
                 };
